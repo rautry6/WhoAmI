@@ -15,14 +15,19 @@ public class Inventory : MonoBehaviour
         inventory = new List<Item>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void AddItem(Item newItem)
     {
         inventory.Add(newItem);
+        InventoryUIManager.Instance.ItemAdded(newItem);
+    }
+
+    public void  RemoveItem(Item itemToRemove)
+    {
+        // remove item from inventory
+        int index = inventory.IndexOf(itemToRemove);
+        inventory.RemoveAt(index);
+
+        // remove item from ui
+        InventoryUIManager.Instance.ItemRemoved(index);
     }
 }
