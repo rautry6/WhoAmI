@@ -18,7 +18,7 @@ public class Inventory : MonoBehaviour
     public void AddItem(Item newItem)
     {
         inventory.Add(newItem);
-        InventoryUIManager.Instance.ItemAdded(newItem);
+        UIManager.Instance.ItemAdded(newItem);
     }
 
     public void  RemoveItem(Item itemToRemove)
@@ -28,6 +28,6 @@ public class Inventory : MonoBehaviour
         inventory.RemoveAt(index);
 
         // remove item from ui
-        InventoryUIManager.Instance.ItemRemoved(index);
+        UIManager.Instance.ItemRemoved(index);
     }
 }
