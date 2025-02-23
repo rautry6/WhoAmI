@@ -11038,7 +11038,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -63}
+  m_AnchoredPosition: {x: -2.899994, y: -63}
   m_SizeDelta: {x: 104.9, y: 57.600006}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1683272471
@@ -11672,7 +11672,6 @@ MonoBehaviour:
   ItemHolder: {fileID: 532896121}
   InventoryItemPrefab: {fileID: 0}
   animationDuration: 0.5
-  ButtonText: {fileID: 0}
   invOnScreenPosition: {fileID: 2091649816}
   invOffScreenPosition: {fileID: 2077738189}
   cluePanel: {fileID: 544368306}
