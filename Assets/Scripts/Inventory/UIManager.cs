@@ -15,7 +15,7 @@ public class UIManager : MonoBehaviour
     public GameObject InventoryItemPrefab;
     public float animationDuration = 0.5f;
     private bool invOnScreen = false;
-    public TMP_Text ButtonText;
+    //public TMP_Text ButtonText;
 
     public Transform invOnScreenPosition;
     public Transform invOffScreenPosition;
@@ -86,12 +86,12 @@ public class UIManager : MonoBehaviour
         if (invOnScreen)
         {
             inventoryPanel.DOAnchorPos(invOffScreenPosition.position, animationDuration);
-            ButtonText.text = "v";
+            //ButtonText.text = "v";
         }
         else
         {
             inventoryPanel.DOAnchorPos(invOnScreenPosition.position, animationDuration);
-            ButtonText.text = "^";
+            //ButtonText.text = "^";
         }
 
         invOnScreen = !invOnScreen;
