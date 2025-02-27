@@ -2,10 +2,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
+public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public TMP_Text Name;
-    public GameObject PinnedSprite;
+    public RectTransform PinnedSprite;
     private bool pinned;
 
     public RectTransform boundary; // The area within which the UI moves
@@ -17,10 +17,21 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     public float moveSpeed = 50f; // Speed of random movement
     private Vector2 randomDirection;
 
+
+    // bool used to determine which ui the player is hovering over
+    private bool hoverTarget = false;
+
+    private Camera cam;
+
+    private bool makingConnection = false;
+    public GameObject CurvedLinePrefab;
+    public UICurvedLineController currentLine;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rectTransform = GetComponent<RectTransform>();
+        cam = Camera.main;
         CalculateBounds();
         StartRandomMovement();
     }
@@ -31,15 +42,39 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         {
             MoveRandomly();
         }
+        
+        if(makingConnection && hoverTarget && Input.GetKeyDown(KeyCode.Mouse0))
+        {
+               
+        }
 
+        if (!hoverTarget)
+        {
+            return;
+        }
+
+        // unpin
         if (pinned && Input.GetKeyDown(KeyCode.Mouse1))
         {
             InfoUnpinned();
         }
 
-        if (isDragging && Input.GetKeyDown(KeyCode.Mouse1))
+        // pin
+        if (hoverTarget && Input.GetKeyDown(KeyCode.Mouse1))
         {
             InfoPinned();
+        }
+
+        // connect clues
+        if(pinned && Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            makingConnection = true;
+
+            currentLine = Instantiate(CurvedLinePrefab, transform.parent).GetComponent<UICurvedLineController>();
+
+            currentLine.startUI = PinnedSprite;
+
+            Debug.Log("line");
         }
     }
 
@@ -52,8 +87,6 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         // get half the size and use that for min/max.
         Vector2 halfSize = boundarySize * 0.45f;
 
-        // If your draggable element's pivot is centered, this works well.
-        // Note: We assume both boundary and element use the same coordinate space.
         minBounds = -halfSize;
         maxBounds = halfSize;
     }
@@ -87,8 +120,6 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
     public void OnDrag(PointerEventData eventData)
     {
-        if(pinned) { return; }
-
         rectTransform.anchoredPosition += eventData.delta;
 
         // Clamp within boundary
@@ -108,12 +139,22 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     public void InfoPinned()
     {
         pinned = true;
-        PinnedSprite.SetActive(true);
+        PinnedSprite.gameObject.SetActive(true);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        hoverTarget = true;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        hoverTarget = false;
     }
 
     public void InfoUnpinned()
     {
         pinned = false;
-        PinnedSprite.SetActive(false);
+        PinnedSprite.gameObject.SetActive(false);
     }
 }
