@@ -23,9 +23,10 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
     private Camera cam;
 
-    private bool makingConnection = false;
+    public bool MakingConnection = false;
     public GameObject CurvedLinePrefab;
-    public UICurvedLineController currentLine;
+
+    private UICurvedLineController curvedLine;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -34,6 +35,8 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         cam = Camera.main;
         CalculateBounds();
         StartRandomMovement();
+
+        InfoManager.instance.AddInfo(this);
     }
 
     void Update()
@@ -42,11 +45,7 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         {
             MoveRandomly();
         }
-        
-        if(makingConnection && hoverTarget && Input.GetKeyDown(KeyCode.Mouse0))
-        {
-               
-        }
+
 
         if (!hoverTarget)
         {
@@ -66,15 +65,47 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         }
 
         // connect clues
-        if(pinned && Input.GetKeyDown(KeyCode.Mouse0))
+
+        // remove an existing connection
+
+
+        // early cancel if the connection is already amde
+        if(curvedLine != null && curvedLine.connectionMade) { return; }
+
+        // connection starting with current info
+        if(!MakingConnection && pinned && Input.GetKeyDown(KeyCode.Mouse0))
         {
-            makingConnection = true;
+            // alert manager a connection is attempting to be made
+            InfoManager.instance.MakingConnection();
 
-            currentLine = Instantiate(CurvedLinePrefab, transform.parent).GetComponent<UICurvedLineController>();
+            // create and store curved line for later reference before passing it to manager
+            curvedLine = Instantiate(CurvedLinePrefab, transform.parent).GetComponent<UICurvedLineController>();
+            InfoManager.instance.currentLine = curvedLine;
 
-            currentLine.startUI = PinnedSprite;
+            // set line start point to current info panel
+            InfoManager.instance.currentLine.startUI = PinnedSprite;
 
             Debug.Log("line");
+
+            return;
+        }
+
+
+        // connection not starting with current info
+        if (MakingConnection && hoverTarget && Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            // pin info is not already
+            if (!pinned) { InfoPinned(); }
+
+            // make connection
+            InfoManager.instance.MakeConnection(this);
+
+            // update line end point
+            InfoManager.instance.currentLine.uiLine.EndPointTransform = PinnedSprite;
+            InfoManager.instance.currentLine.connectionMade = true;
+
+            InfoManager.instance.ConnectionMade();
+
         }
     }
 

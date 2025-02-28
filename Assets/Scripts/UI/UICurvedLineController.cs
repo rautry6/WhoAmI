@@ -1,3 +1,4 @@
+using System.Net;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,7 @@ public class UICurvedLineController : MonoBehaviour
 
     // We'll use the UI line's own RectTransform as the conversion reference.
     private RectTransform lineRect;
+    public bool connectionMade = false;
 
     private void Awake()
     {
@@ -37,17 +39,34 @@ public class UICurvedLineController : MonoBehaviour
             out startLocalPos);
         uiLine.startPoint = startLocalPos;
 
-        // Convert the mouse position (screen space) into the local space of the UI line.
-        Vector2 mouseLocalPos;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            lineRect,
-            Input.mousePosition,
-            null,
-            out mouseLocalPos);
-        uiLine.endPoint = mouseLocalPos;
+        Vector2 end;
+
+        if (!connectionMade)
+        {
+            // Convert the mouse position (screen space) into the local space of the UI line.
+            Vector2 mouseLocalPos;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                lineRect,
+                Input.mousePosition,
+                null,
+                out mouseLocalPos);
+
+            end = mouseLocalPos;
+            uiLine.endPoint = mouseLocalPos;
+        }
+        else
+        {
+            Vector3 worldPosi = uiLine.EndPointTransform.TransformPoint(Vector3.zero);  // Get correct world pos
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                lineRect,
+                worldPosi,
+                null,
+                out end);
+            uiLine.endPoint = end;
+        }
 
         // Set the control point as the midpoint plus an offset.
-        uiLine.controlPoint = (startLocalPos + mouseLocalPos) * 0.5f + controlOffset;
+        uiLine.controlPoint = (startLocalPos + end) * 0.5f + controlOffset;
 
         // Force the curved line to update its mesh.
         uiLine.SetVerticesDirty();

@@ -8,6 +8,7 @@ public class UICurvedLine : MaskableGraphic
     [Header("Curve Settings")]
     public Vector2 startPoint;   // The beginning of the line (in local canvas space)
     public Vector2 endPoint;     // The end of the line (in local canvas space)
+    public RectTransform EndPointTransform;
     public Vector2 controlPoint; // Determines the curvature (a good default is the midpoint plus an offset)
 
     [Header("Appearance")]
