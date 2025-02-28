@@ -124,6 +124,7 @@ MonoBehaviour:
       m_Calls: []
   startPoint: {x: 0, y: 0}
   endPoint: {x: 0, y: 0}
+  EndPointTransform: {fileID: 0}
   controlPoint: {x: 0, y: 0}
   thickness: 5
   segmentCount: 20
@@ -143,3 +144,4 @@ MonoBehaviour:
   startUI: {fileID: 0}
   canvas: {fileID: 0}
   controlOffset: {x: 0, y: 50}
+  connectionMade: 0

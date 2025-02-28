@@ -19,7 +19,7 @@ public class InfoManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        
     }
 
     public void MakeConnection(InfoUI connectedUI)
@@ -35,7 +35,7 @@ public class InfoManager : MonoBehaviour
 
     public void MakeClue()
     {
-
+        // make a new clue
     }
 
     public void AddInfo(InfoUI newInfo)
