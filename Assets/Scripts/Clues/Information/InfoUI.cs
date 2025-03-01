@@ -28,6 +28,9 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
     private UICurvedLineController curvedLine;
 
+    // info object for ui
+    public Info info;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
