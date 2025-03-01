@@ -107,6 +107,9 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         // connection not starting with current info
         if (MakingConnection && hoverTarget && Input.GetKeyDown(KeyCode.Mouse0))
         {
+            // return early if trying to make connection with self
+            if(InfoManager.instance.currentLine.startUI == PinnedSprite) { return; }
+
             // pin info is not already
             if (!pinned) { InfoPinned(); }
 
