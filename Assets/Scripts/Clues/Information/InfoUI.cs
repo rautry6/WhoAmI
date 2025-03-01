@@ -32,6 +32,7 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     void Start()
     {
         rectTransform = GetComponent<RectTransform>();
+        boundary = transform.parent.GetComponent<RectTransform>();
         cam = Camera.main;
         CalculateBounds();
         StartRandomMovement();
@@ -66,11 +67,23 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
         // connect clues
 
-        // remove an existing connection
+        // early cancel if the connection is already made
+        if(curvedLine != null && curvedLine.connectionMade) {
+             
 
+            // remove a connection
+            if(hoverTarget && Input.GetKeyDown(KeyCode.Mouse1))
+            {
+                // get rid of previous line
+                Destroy(curvedLine.gameObject);
 
-        // early cancel if the connection is already amde
-        if(curvedLine != null && curvedLine.connectionMade) { return; }
+                // alert manager of connection change
+                InfoManager.instance.RemoveConnection(this);
+            }
+
+            return; 
+        
+        }
 
         // connection starting with current info
         if(!MakingConnection && pinned && Input.GetKeyDown(KeyCode.Mouse0))
