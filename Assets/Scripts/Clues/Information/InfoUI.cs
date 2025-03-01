@@ -28,10 +28,14 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
     private UICurvedLineController curvedLine;
 
+    // info object for ui
+    public Info info;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rectTransform = GetComponent<RectTransform>();
+        boundary = transform.parent.GetComponent<RectTransform>();
         cam = Camera.main;
         CalculateBounds();
         StartRandomMovement();
@@ -66,11 +70,23 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
 
         // connect clues
 
-        // remove an existing connection
+        // early cancel if the connection is already made
+        if(curvedLine != null && curvedLine.connectionMade) {
+             
 
+            // remove a connection
+            if(hoverTarget && Input.GetKeyDown(KeyCode.Mouse1))
+            {
+                // get rid of previous line
+                Destroy(curvedLine.gameObject);
 
-        // early cancel if the connection is already amde
-        if(curvedLine != null && curvedLine.connectionMade) { return; }
+                // alert manager of connection change
+                InfoManager.instance.RemoveConnection(this);
+            }
+
+            return; 
+        
+        }
 
         // connection starting with current info
         if(!MakingConnection && pinned && Input.GetKeyDown(KeyCode.Mouse0))
@@ -94,6 +110,9 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         // connection not starting with current info
         if (MakingConnection && hoverTarget && Input.GetKeyDown(KeyCode.Mouse0))
         {
+            // return early if trying to make connection with self
+            if(InfoManager.instance.currentLine.startUI == PinnedSprite) { return; }
+
             // pin info is not already
             if (!pinned) { InfoPinned(); }
 
