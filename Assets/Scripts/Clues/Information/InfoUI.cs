@@ -1,6 +1,9 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using DG.Tweening;
+using UnityEngine.UI;
+using System.Collections;
 
 public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -31,6 +34,9 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     // info object for ui
     public Info info;
 
+    public Color IncorrectColor;
+    public Color CorrectColor;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -41,6 +47,7 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         StartRandomMovement();
 
         InfoManager.instance.AddInfo(this);
+        Name.text = info.Name;
     }
 
     void Update()
@@ -224,5 +231,29 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         {
             Destroy(curvedLine.gameObject);
         }
+    }
+
+    // methods for handling incorrect/correct choices for clues
+
+    public IEnumerator CorrectInfo()
+    {
+        Image image = GetComponent<Image>();
+
+        image.DOColor(CorrectColor, 0.5f);
+
+        yield return new WaitForSeconds(1.5f);
+
+        image.DOColor(Color.white, 0.5f);
+    }
+
+    public IEnumerator IncorrectInfo()
+    {
+        Image image = GetComponent<Image>();
+
+        image.DOColor(IncorrectColor, 0.5f);
+
+        yield return new WaitForSeconds(1.5f);
+
+        image.DOColor(Color.white, 0.5f);
     }
 }

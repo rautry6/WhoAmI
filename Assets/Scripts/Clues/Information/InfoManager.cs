@@ -16,6 +16,8 @@ public class InfoManager : MonoBehaviour
 
     private int numInfoForClue = 3; // how many infos the player need to make a clue
 
+    private Dictionary<EInfoTypes, int> Connections;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -42,7 +44,7 @@ public class InfoManager : MonoBehaviour
         }
 
         // check if player can make clue now
-        MakeClueButton.interactable = CheckIfClueCanBeMade();
+        MakeClueButton.interactable = (CurrentConnections.Count >= numInfoForClue);
     }
 
     public void RemoveConnection(InfoUI connectedUI)
@@ -77,6 +79,32 @@ public class InfoManager : MonoBehaviour
         else
         {
             // some sort of ui indication
+            EInfoTypes mostCommonType = CurrentConnections[0].info.InfoType;
+
+            int curHighest;
+            Connections.TryGetValue(mostCommonType, out curHighest);
+
+            foreach(var type in Connections)
+            {
+                if(type.Value > curHighest)
+                {
+                    curHighest = type.Value;
+                    mostCommonType = type.Key;
+                }
+            }
+
+            foreach(InfoUI infoUI in CurrentConnections)
+            {
+                if(infoUI.info.InfoType == mostCommonType)
+                {
+                    StartCoroutine(infoUI.CorrectInfo());
+                }
+                else
+                {
+                    StartCoroutine(infoUI.IncorrectInfo());
+                }
+            }
+
         }
     }
 
@@ -84,7 +112,10 @@ public class InfoManager : MonoBehaviour
     {
         int numSameInfoType = 1;
         bool canMakeConnection = false;
+        bool allSameType = true;
         EInfoTypes lastInfoType = EInfoTypes.Favorite_Color; // default assign
+
+        Connections = new Dictionary<EInfoTypes, int>();
 
         for(int i = 0; i < CurrentConnections.Count; i++)
         {
@@ -93,14 +124,28 @@ public class InfoManager : MonoBehaviour
                 // get current type of info
                 EInfoTypes currentInfoType = CurrentConnections[i].info.InfoType;
 
-                // see if its same as previous
-                if(currentInfoType != lastInfoType)
+                // get the num of info of that type if there is any already in dictionary
+                int value;  
+                Connections.TryGetValue(currentInfoType, out value);
+
+                // add to the value
+                if (Connections.ContainsKey(currentInfoType))
                 {
-                    // break early if not same
-                    canMakeConnection = false;
-                    break;
+                    Connections[currentInfoType] = value + 1;
                 }
-                
+                else
+                {
+                    Connections.Add(currentInfoType, value + 1);
+                }
+
+
+                // see if its same as previous
+                if (currentInfoType != lastInfoType)
+                {
+                    // not same type
+                    allSameType = false;
+                    continue;
+                }
 
                 // if same assign var and move to next info
                 lastInfoType = currentInfoType;
@@ -121,6 +166,12 @@ public class InfoManager : MonoBehaviour
 
                 numSameInfoType++;
             }
+        }
+
+
+        if (!allSameType)
+        {
+            canMakeConnection = false;
         }
 
 

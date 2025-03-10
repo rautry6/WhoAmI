@@ -307,3 +307,6 @@ MonoBehaviour:
   moveSpeed: 50
   MakingConnection: 0
   CurvedLinePrefab: {fileID: 8774550365510836468, guid: 02fc9708cd917044eb7a3203cef055c3, type: 3}
+  info: {fileID: 0}
+  IncorrectColor: {r: 1, g: 0.3075471, b: 0.3075471, a: 1}
+  CorrectColor: {r: 0.47397968, g: 0.9622642, b: 0.31772864, a: 1}
