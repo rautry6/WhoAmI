@@ -91,6 +91,9 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
         // connection starting with current info
         if(!MakingConnection && pinned && Input.GetKeyDown(KeyCode.Mouse0))
         {
+            // make connection
+            InfoManager.instance.MakeConnection(this);
+
             // alert manager a connection is attempting to be made
             InfoManager.instance.MakingConnection();
 
@@ -206,5 +209,20 @@ public class InfoUI : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHa
     {
         pinned = false;
         PinnedSprite.gameObject.SetActive(false);
+    }
+
+    public void DestroyInfo()
+    {
+        // info
+
+        Destroy(gameObject);
+    }
+
+    public void DestroyLine()
+    {
+        if (curvedLine != null)
+        {
+            Destroy(curvedLine.gameObject);
+        }
     }
 }

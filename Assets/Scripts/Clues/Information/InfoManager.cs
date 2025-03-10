@@ -2,6 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEngine.UI;
 
 public class InfoManager : MonoBehaviour
 {
@@ -11,12 +12,15 @@ public class InfoManager : MonoBehaviour
     public UICurvedLineController currentLine;
     public List<InfoUI> AllCurrentInfo;
 
+    public Button MakeClueButton;
+
     private int numInfoForClue = 3; // how many infos the player need to make a clue
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        instance = this;   
+        instance = this;
+        MakeClueButton.interactable = false; // disable by default
     }
 
     // Update is called once per frame
@@ -27,8 +31,18 @@ public class InfoManager : MonoBehaviour
 
     public void MakeConnection(InfoUI connectedUI)
     {
-        CurrentConnections.Add(connectedUI);
-        currentLine.connectionMade = true;
+        if(!CurrentConnections.Contains(connectedUI))
+        {
+             CurrentConnections.Add(connectedUI);
+        }
+
+        if(currentLine != null)
+        {
+            currentLine.connectionMade = true;
+        }
+
+        // check if player can make clue now
+        MakeClueButton.interactable = CheckIfClueCanBeMade();
     }
 
     public void RemoveConnection(InfoUI connectedUI)
@@ -38,12 +52,37 @@ public class InfoManager : MonoBehaviour
 
     public void MakeClue()
     {
+        MakeClueButton.interactable = false; // disable button
+
         // make a new clue
+        bool makeClue = CheckIfClueCanBeMade();
+
+        if (makeClue)
+        {
+            // create new clue
+            ClueManager.instance.AddClue(CurrentConnections[0].info.InfoType);
+
+            // remove used info or make them uninteractable
+            foreach(var info in CurrentConnections)
+            {
+                info.DestroyLine();
+            }
+
+            foreach (var info in CurrentConnections)
+            {
+                info.DestroyInfo();
+            }
+
+        }
+        else
+        {
+            // some sort of ui indication
+        }
     }
 
-    private void CheckIfClueCanBeMade()
+    private bool CheckIfClueCanBeMade()
     {
-        int numSameInfoType = 0;
+        int numSameInfoType = 1;
         bool canMakeConnection = false;
         EInfoTypes lastInfoType = EInfoTypes.Favorite_Color; // default assign
 
@@ -85,19 +124,10 @@ public class InfoManager : MonoBehaviour
         }
 
 
-
-        if(canMakeConnection)
-        {
-            // create new clue
-
-            // remove used info or make them uninteractable
+        return canMakeConnection;
 
 
-        }
-        else
-        {
-            // some sort of ui indication
-        }
+
     }
 
     public void AddInfo(InfoUI newInfo)
